@@ -103,3 +103,14 @@ where dea.continent is not null;
 
 Select *, (rolling_count/population)*100 AS vaccinated_percentage 
 From PercentPopVaccinated ;
+
+
+--Creating views for visualization
+CREATE VIEW PercentPopVaccinated as
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
+SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) as rolling_count
+From CovidDeath dea
+Join CovidVaccination vac
+	On dea.location = vac.location
+	and dea.date = vac.date
+where dea.continent is not null;
